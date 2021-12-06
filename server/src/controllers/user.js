@@ -209,14 +209,17 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        // const { id } = req.params;
 
-        const updateData = Object.assign({}, req.body); // Copy req.body in order not to change it
+        const id = req.user.id;
+
+        // let updateData = req.body;
+        let updateData = Object.assign({}, req.body); // Copy req.body in order not to change it
         updateData.image = req.file.filename;
 
         await user.update(updateData, {
             where: {
-                id,
+                id: id,
             },
         });
 
@@ -302,6 +305,40 @@ exports.getPartners = async (req, res) => {
         res.send({
             status: "success",
             data: dataUsers,
+        });
+    } catch (error) {
+        console.log(error);
+        res.send({
+            status: "failed",
+            message: "Server Error",
+        });
+    }
+};
+
+exports.getUserId = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const dataUser = await user.findOne({
+            where: {
+                id,
+            },
+            attributes: {
+                exclude: ["password", "createdAt", "updatedAt"],
+            },
+        });
+
+        // make url image for open public
+        data = JSON.parse(JSON.stringify(dataUser));
+
+        data = {
+            ...data,
+            image: process.env.PATH_FILE + data.image,
+        };
+
+        res.send({
+            status: "success",
+            data: data,
         });
     } catch (error) {
         console.log(error);

@@ -11,6 +11,7 @@ const {
     updateUser,
     deleteUser,
     getPartners,
+    getUserId,
 } = require("../controllers/user");
 
 const {
@@ -49,8 +50,9 @@ router.post("/login", login);
 router.get("/check-auth", auth, checkAuth);
 
 router.get("/users", getUsers);
+router.get("/user/:id", getUserId);
 router.get("/user", auth, getUser);
-router.patch("/user/:id", auth, uploadFile("image"), updateUser);
+router.patch("/user", auth, uploadFile("image"), updateUser);
 router.delete("/user/:id", auth, deleteUser);
 
 router.get("/partners", getPartners);
